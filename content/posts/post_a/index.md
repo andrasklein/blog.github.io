@@ -9,8 +9,6 @@ tags: ["AD","home lab"]
 
 categories: ["Active Directory"]
 ---
-![b](images/schema.png)
-https://github.com/Orange-Cyberdefense/GOAD/blob/main/docs/img/GOAD_schema.png
 
 As I earned my Practical Network Penetration Tester (PNPT) certification from TCM Security, I wanted to further advance and improve my knowledge. My new goal became the OSCP certification. As I engaged with industry professionals across my country, I learned that this certification had become the standard. As I love new challenges I started to dig deep into what resources should I utilize and where should I begin.
 
@@ -18,6 +16,10 @@ Although I started the CPTS learning path at HTB Academy I needed an additional 
 
 The author of this lab is Mayfly who was kind enough to make this lab publicly accessible and provide amazing documentation as I set up the lab. (I am going to link Mayfly's documentation at the end of the resources section)
 There are many ways to set up this home lab and I even found an amazing video from Conda that showcased how an individual can easily deploy this. (I am going to link the video to the resources section)
+
+![b](images/schema.png)
+https://github.com/Orange-Cyberdefense/GOAD/blob/main/docs/img/GOAD_schema.png
+
 
 The bare minimum hardware requirements for the version I was setting up were 24GB of RAM and 120GB of storage.
 
