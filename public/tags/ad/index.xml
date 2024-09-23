@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>AD on Andras Klein&#39;s IT Security Blog</title>
+    <link>//localhost:1313/tags/ad/</link>
+    <description>Recent content in AD on Andras Klein&#39;s IT Security Blog</description>
+    <generator>Hugo -- 0.134.2</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 13 Sep 2024 17:25:24 +0200</lastBuildDate>
+    <atom:link href="//localhost:1313/tags/ad/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>AD home lab</title>
+      <link>//localhost:1313/posts/post_a/</link>
+      <pubDate>Fri, 13 Sep 2024 17:25:24 +0200</pubDate>
+      <guid>//localhost:1313/posts/post_a/</guid>
+      <description>&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;images/schema.png&#34; alt=&#34;b&#34;  /&gt;
+
+&lt;a href=&#34;https://github.com/Orange-Cyberdefense/GOAD/blob/main/docs/img/GOAD_schema.png&#34;&gt;https://github.com/Orange-Cyberdefense/GOAD/blob/main/docs/img/GOAD_schema.png&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;As I earned my Practical Network Penetration Tester (PNPT) certification from TCM Security, I wanted to further advance and improve my knowledge. My new goal became the OSCP certification. As I engaged with industry professionals across my country, I learned that this certification had become the standard. As I love new challenges I started to dig deep into what resources should I utilize and where should I begin.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

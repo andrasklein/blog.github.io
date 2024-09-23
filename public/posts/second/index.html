@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Building a port scanner in Python | Andras Klein&#39;s IT Security Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="I have found myself in this situation many times along my journey on HTB and THM machines, I needed a port scanner that was easy to transfer to a target machine and use from that point utilizing available technologies.
+Original author credits go to Heath Adams. My tool is based heavily on what I learned from TCM Academy in the PEH course.
+This is what was used in the PEH course.">
+<meta name="author" content="">
+<link rel="canonical" href="//localhost:1313/posts/second/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.fc220c15db4aef0318bbf30adc45d33d4d7c88deff3238b23eb255afdc472ca6.css" integrity="sha256-/CIMFdtK7wMYu/MK3EXTPU18iN7/MjiyPrJVr9xHLKY=" rel="preload stylesheet" as="style">
+<link rel="icon" href="//localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="//localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="//localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="//localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="//localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="//localhost:1313/posts/second/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="//localhost:1313/" accesskey="h" title="Andras Klein&#39;s IT Security Blog (Alt + H)">Andras Klein&#39;s IT Security Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="//localhost:1313/categories/" title="Categories">
+                    <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="//localhost:1313/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="//localhost:1313/archives/" title="Archives">
+                    <span>Archives</span>
+                </a>
+            </li>
+            <li>
+                <a href="//localhost:1313/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+            <li>
+                <a href="//localhost:1313/search/" title="Search (Alt &#43; /)" accesskey=/>
+                    <span>Search</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="//localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="//localhost:1313/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      Building a port scanner in Python
+    </h1>
+    <div class="post-meta"><span title='2024-09-13 17:25:24 +0200 CEST'>September 13, 2024</span>&nbsp;·&nbsp;5 min
+
+</div>
+  </header> 
+  <div class="post-content"><p>I have found myself in this situation many times along my journey on HTB and THM machines, I needed a port scanner that was easy to transfer to a target machine and use from that point utilizing available technologies.</p>
+<p>Original author credits go to Heath Adams. My tool is based heavily on what I learned from TCM Academy in the PEH course.</p>
+<p>This is what was used in the PEH course.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> sys
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> socket
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> datetime <span style="color:#f92672">import</span> datetime
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> len(sys<span style="color:#f92672">.</span>argv) <span style="color:#f92672">==</span> <span style="color:#ae81ff">2</span>:
+</span></span><span style="display:flex;"><span>	target <span style="color:#f92672">=</span> socket<span style="color:#f92672">.</span>gethostbyname(sys<span style="color:#f92672">.</span>argv[<span style="color:#ae81ff">1</span>]) 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>	print(<span style="color:#e6db74">&#34;Invalid amount of arguments.&#34;</span>)
+</span></span><span style="display:flex;"><span>	print(<span style="color:#e6db74">&#34;Syntax: python3 scanner.py&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">50</span>)
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;Scanning target &#34;</span><span style="color:#f92672">+</span>target)
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;Time started: &#34;</span><span style="color:#f92672">+</span>str(datetime<span style="color:#f92672">.</span>now()))
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">50</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">for</span> port <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">50</span>,<span style="color:#ae81ff">85</span>):
+</span></span><span style="display:flex;"><span>		s <span style="color:#f92672">=</span> socket<span style="color:#f92672">.</span>socket(socket<span style="color:#f92672">.</span>AF_INET, socket<span style="color:#f92672">.</span>SOCK_STREAM)
+</span></span><span style="display:flex;"><span>		socket<span style="color:#f92672">.</span>setdefaulttimeout(<span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>		result <span style="color:#f92672">=</span> s<span style="color:#f92672">.</span>connect_ex((target,port)) 
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">if</span> result <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>			print(<span style="color:#e6db74">&#34;Port </span><span style="color:#e6db74">{}</span><span style="color:#e6db74"> is open&#34;</span><span style="color:#f92672">.</span>format(port))
+</span></span><span style="display:flex;"><span>		s<span style="color:#f92672">.</span>close()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">except</span> <span style="color:#a6e22e">KeyboardInterrupt</span>:
+</span></span><span style="display:flex;"><span>	print(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">Exiting program.&#34;</span>)
+</span></span><span style="display:flex;"><span>	sys<span style="color:#f92672">.</span>exit()
+</span></span><span style="display:flex;"><span>	
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">except</span> socket<span style="color:#f92672">.</span>gaierror:
+</span></span><span style="display:flex;"><span>	print(<span style="color:#e6db74">&#34;Hostname could not be resolved.&#34;</span>)
+</span></span><span style="display:flex;"><span>	sys<span style="color:#f92672">.</span>exit()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">except</span> socket<span style="color:#f92672">.</span>error:
+</span></span><span style="display:flex;"><span>	print(<span style="color:#e6db74">&#34;Could not connect to server.&#34;</span>)
+</span></span><span style="display:flex;"><span>	sys<span style="color:#f92672">.</span>exit()
+</span></span></code></pre></div><hr>
+<p>Here are the changes I made to it:</p>
+<p>I added the &ldquo;argparse&rdquo; library to have the freedom to have a greater syntax when executing the code.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> argparse
+</span></span></code></pre></div><p>It allows the user to specify with the -p and -i what IP address and port the user wants to scan for.</p>
+<p>I added the &ldquo;threading&rdquo; Python module which allows to have separate operations by creating so-called threads. Why is it important? Because with threading a user can scan multiple ports at the same time so it speeds up the scan.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> threading
+</span></span></code></pre></div><hr>
+<p>I also created functions for more robust solutions and defined the following things in the scan_port function:</p>
+<ul>
+<li>setting up a timeout</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span> s<span style="color:#f92672">.</span>settimeout(<span style="color:#ae81ff">1</span>)
+</span></span></code></pre></div><p>This makes it possible to prevent the program from hanging if a port is closed or there are any other issues. This makes it possible to move on to the next port if needed.</p>
+<ul>
+<li>checking for open port</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>result <span style="color:#f92672">=</span> s<span style="color:#f92672">.</span>connect_ex((target, port))
+</span></span></code></pre></div><p>This is the core function. What does it do? It attempts to connect to the specified IP on the specified port(s).</p>
+<ul>
+<li>grabbing the banner</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> result <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>        banner <span style="color:#f92672">=</span> s<span style="color:#f92672">.</span>recv(<span style="color:#ae81ff">1024</span>)<span style="color:#f92672">.</span>decode()<span style="color:#f92672">.</span>strip()
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Port </span><span style="color:#e6db74">{</span>port<span style="color:#e6db74">}</span><span style="color:#e6db74"> is open | Service: </span><span style="color:#e6db74">{</span>banner<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">except</span>:
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Port </span><span style="color:#e6db74">{</span>port<span style="color:#e6db74">}</span><span style="color:#e6db74"> is open | Service: Unknown&#34;</span>)
+</span></span></code></pre></div><p>This part helps to understand what service is behind the currently scanned port.</p>
+<ul>
+<li>handling errors</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">except</span> socket<span style="color:#f92672">.</span>error:
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Could not connect to port </span><span style="color:#e6db74">{</span>port<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span> <span style="color:#66d9ef">as</span> e:
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Error scanning port </span><span style="color:#e6db74">{</span>port<span style="color:#e6db74">}</span><span style="color:#e6db74">: </span><span style="color:#e6db74">{</span>e<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span></code></pre></div><p>This way the scanner can easily handle issues.</p>
+<hr>
+<p>I added the run_scan function and defined the following things:</p>
+<ul>
+<li>banner for the output</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">50</span>)
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Scanning target </span><span style="color:#e6db74">{</span>target<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;Time started: &#34;</span> <span style="color:#f92672">+</span> str(datetime<span style="color:#f92672">.</span>now()))
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">50</span>)
+</span></span></code></pre></div><p>This prints out a banner to the console and also provides the user with feedback.</p>
+<ul>
+<li>utilized the previously imported threading module</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>threads <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> port <span style="color:#f92672">in</span> port_range:
+</span></span><span style="display:flex;"><span>    thread <span style="color:#f92672">=</span> threading<span style="color:#f92672">.</span>Thread(target<span style="color:#f92672">=</span>scan_port, args<span style="color:#f92672">=</span>(target, port))
+</span></span><span style="display:flex;"><span>    threads<span style="color:#f92672">.</span>append(thread)
+</span></span><span style="display:flex;"><span>    thread<span style="color:#f92672">.</span>start()
+</span></span></code></pre></div><p>For each port, it creates a thread that will execute the function that it belongs to.</p>
+<ul>
+<li>output the finished scan</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">50</span>)
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;Scanning complete.&#34;</span>)
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Time finished: </span><span style="color:#e6db74">{</span>str(datetime<span style="color:#f92672">.</span>now())<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span></code></pre></div><p>This provides feedback about the scan&rsquo;s completion and duration.</p>
+<hr>
+<p>The last part of the code defines the following things:</p>
+<ul>
+<li>which argument should do wath</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>parser <span style="color:#f92672">=</span> argparse<span style="color:#f92672">.</span>ArgumentParser(description<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;A simple multi-threaded port scanner.&#34;</span>)
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_argument(<span style="color:#e6db74">&#39;-i&#39;</span>, <span style="color:#e6db74">&#39;--ip&#39;</span>, type<span style="color:#f92672">=</span>str, required<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, help<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Target IP address&#39;</span>)
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_argument(<span style="color:#e6db74">&#39;-p&#39;</span>, <span style="color:#e6db74">&#39;--ports&#39;</span>, type<span style="color:#f92672">=</span>str, required<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, help<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Port range to scan (e.g., 20-80)&#39;</span>)
+</span></span></code></pre></div><p>This allows the user of the script to specify which IP address and port range they want to scan.</p>
+<ul>
+<li>store user input in a variable</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>args <span style="color:#f92672">=</span> parser<span style="color:#f92672">.</span>parse_args()
+</span></span></code></pre></div><p>This variable named args stores what the user inputs into the command line. This variable is used later in other processes.</p>
+<ul>
+<li>processing the port range</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>port_range <span style="color:#f92672">=</span> args<span style="color:#f92672">.</span>ports<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;-&#39;</span>)
+</span></span><span style="display:flex;"><span>start_port <span style="color:#f92672">=</span> int(port_range[<span style="color:#ae81ff">0</span>])
+</span></span><span style="display:flex;"><span>end_port <span style="color:#f92672">=</span> int(port_range[<span style="color:#ae81ff">1</span>])
+</span></span><span style="display:flex;"><span>port_range <span style="color:#f92672">=</span> range(start_port, end_port <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>)
+</span></span></code></pre></div><p>This way the script can split the range into a start and an end value. Also allows the script can easily manage and iterate over the specified port range.</p>
+<ul>
+<li>handling different types of errors</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>    run_scan(target, port_range)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">except</span> <span style="color:#a6e22e">KeyboardInterrupt</span>:
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">Exiting program.&#34;</span>)
+</span></span><span style="display:flex;"><span>    sys<span style="color:#f92672">.</span>exit()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">except</span> socket<span style="color:#f92672">.</span>gaierror:
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Hostname could not be resolved.&#34;</span>)
+</span></span><span style="display:flex;"><span>    sys<span style="color:#f92672">.</span>exit()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">except</span> socket<span style="color:#f92672">.</span>error:
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Could not connect to server.&#34;</span>)
+</span></span><span style="display:flex;"><span>    sys<span style="color:#f92672">.</span>exit()
+</span></span></code></pre></div><p>This section ensures that the script can respond correctly to issues that could happen. For example issues like interruption by a user or network problems.</p>
+<hr>
+<p>The final script:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/python3</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> sys
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> socket
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> datetime <span style="color:#f92672">import</span> datetime
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> threading
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> argparse
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">scan_port</span>(target, port):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>        s <span style="color:#f92672">=</span> socket<span style="color:#f92672">.</span>socket(socket<span style="color:#f92672">.</span>AF_INET, socket<span style="color:#f92672">.</span>SOCK_STREAM)
+</span></span><span style="display:flex;"><span>        s<span style="color:#f92672">.</span>settimeout(<span style="color:#ae81ff">1</span>)  
+</span></span><span style="display:flex;"><span>        result <span style="color:#f92672">=</span> s<span style="color:#f92672">.</span>connect_ex((target, port))  
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> result <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>                
+</span></span><span style="display:flex;"><span>                banner <span style="color:#f92672">=</span> s<span style="color:#f92672">.</span>recv(<span style="color:#ae81ff">1024</span>)<span style="color:#f92672">.</span>decode()<span style="color:#f92672">.</span>strip()
+</span></span><span style="display:flex;"><span>                print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Port </span><span style="color:#e6db74">{</span>port<span style="color:#e6db74">}</span><span style="color:#e6db74"> is open | Service: </span><span style="color:#e6db74">{</span>banner<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">except</span>:
+</span></span><span style="display:flex;"><span>                print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Port </span><span style="color:#e6db74">{</span>port<span style="color:#e6db74">}</span><span style="color:#e6db74"> is open | Service: Unknown&#34;</span>)
+</span></span><span style="display:flex;"><span>        s<span style="color:#f92672">.</span>close()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">except</span> socket<span style="color:#f92672">.</span>error:
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Could not connect to port </span><span style="color:#e6db74">{</span>port<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span> <span style="color:#66d9ef">as</span> e:
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Error scanning port </span><span style="color:#e6db74">{</span>port<span style="color:#e6db74">}</span><span style="color:#e6db74">: </span><span style="color:#e6db74">{</span>e<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">run_scan</span>(target, port_range):
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">50</span>)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Scanning target </span><span style="color:#e6db74">{</span>target<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Time started: &#34;</span> <span style="color:#f92672">+</span> str(datetime<span style="color:#f92672">.</span>now()))
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">50</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    threads <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> port <span style="color:#f92672">in</span> port_range:
+</span></span><span style="display:flex;"><span>        thread <span style="color:#f92672">=</span> threading<span style="color:#f92672">.</span>Thread(target<span style="color:#f92672">=</span>scan_port, args<span style="color:#f92672">=</span>(target, port))
+</span></span><span style="display:flex;"><span>        threads<span style="color:#f92672">.</span>append(thread)
+</span></span><span style="display:flex;"><span>        thread<span style="color:#f92672">.</span>start()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> thread <span style="color:#f92672">in</span> threads:
+</span></span><span style="display:flex;"><span>        thread<span style="color:#f92672">.</span>join()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">50</span>)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Scanning complete.&#34;</span>)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Time finished: </span><span style="color:#e6db74">{</span>str(datetime<span style="color:#f92672">.</span>now())<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>parser <span style="color:#f92672">=</span> argparse<span style="color:#f92672">.</span>ArgumentParser(description<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;A simple multi-threaded port scanner.&#34;</span>)
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_argument(<span style="color:#e6db74">&#39;-i&#39;</span>, <span style="color:#e6db74">&#39;--ip&#39;</span>, type<span style="color:#f92672">=</span>str, required<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, help<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Target IP address&#39;</span>)
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_argument(<span style="color:#e6db74">&#39;-p&#39;</span>, <span style="color:#e6db74">&#39;--ports&#39;</span>, type<span style="color:#f92672">=</span>str, required<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, help<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Port range to scan (e.g., 20-80)&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>args <span style="color:#f92672">=</span> parser<span style="color:#f92672">.</span>parse_args()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>target <span style="color:#f92672">=</span> socket<span style="color:#f92672">.</span>gethostbyname(args<span style="color:#f92672">.</span>ip)  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>port_range <span style="color:#f92672">=</span> args<span style="color:#f92672">.</span>ports<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;-&#39;</span>)
+</span></span><span style="display:flex;"><span>start_port <span style="color:#f92672">=</span> int(port_range[<span style="color:#ae81ff">0</span>])
+</span></span><span style="display:flex;"><span>end_port <span style="color:#f92672">=</span> int(port_range[<span style="color:#ae81ff">1</span>])
+</span></span><span style="display:flex;"><span>port_range <span style="color:#f92672">=</span> range(start_port, end_port <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>    run_scan(target, port_range)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">except</span> <span style="color:#a6e22e">KeyboardInterrupt</span>:
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">Exiting program.&#34;</span>)
+</span></span><span style="display:flex;"><span>    sys<span style="color:#f92672">.</span>exit()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">except</span> socket<span style="color:#f92672">.</span>gaierror:
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Hostname could not be resolved.&#34;</span>)
+</span></span><span style="display:flex;"><span>    sys<span style="color:#f92672">.</span>exit()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">except</span> socket<span style="color:#f92672">.</span>error:
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Could not connect to server.&#34;</span>)
+</span></span><span style="display:flex;"><span>    sys<span style="color:#f92672">.</span>exit()
+</span></span></code></pre></div><p><strong>If you notice mistakes or typos or you just have suggestions I would love to hear your feedback and improve at the same time.</strong></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="//localhost:1313/posts/post_a/">
+    <span class="title">« Prev</span>
+    <br>
+    <span>AD home lab</span>
+  </a>
+</nav>
+
+
+<ul class="share-buttons">
+   
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share Building a port scanner in Python on linkedin"
+            href="https://www.linkedin.com/in/andr%C3%A1s-klein/">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+            </svg>
+        </a>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+    </main>
+    
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Andras Klein&#39;s IT Security Blog</title>
+    <link>//localhost:1313/</link>
+    <description>Recent content on Andras Klein&#39;s IT Security Blog</description>
+    <generator>Hugo -- 0.134.2</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 21 Sep 2024 17:13:32 +0200</lastBuildDate>
+    <atom:link href="//localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Finding CVE-s</title>
+      <link>//localhost:1313/posts/third/</link>
+      <pubDate>Sat, 21 Sep 2024 17:13:32 +0200</pubDate>
+      <guid>//localhost:1313/posts/third/</guid>
+      <description>&lt;p&gt;This is the section that I am going to sentence to finding CVE-s.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>AD home lab</title>
+      <link>//localhost:1313/posts/post_a/</link>
+      <pubDate>Fri, 13 Sep 2024 17:25:24 +0200</pubDate>
+      <guid>//localhost:1313/posts/post_a/</guid>
+      <description>&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;images/schema.png&#34; alt=&#34;b&#34;  /&gt;
+
+&lt;a href=&#34;https://github.com/Orange-Cyberdefense/GOAD/blob/main/docs/img/GOAD_schema.png&#34;&gt;https://github.com/Orange-Cyberdefense/GOAD/blob/main/docs/img/GOAD_schema.png&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;As I earned my Practical Network Penetration Tester (PNPT) certification from TCM Security, I wanted to further advance and improve my knowledge. My new goal became the OSCP certification. As I engaged with industry professionals across my country, I learned that this certification had become the standard. As I love new challenges I started to dig deep into what resources should I utilize and where should I begin.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Building a port scanner in Python</title>
+      <link>//localhost:1313/posts/second/</link>
+      <pubDate>Fri, 13 Sep 2024 17:25:24 +0200</pubDate>
+      <guid>//localhost:1313/posts/second/</guid>
+      <description>&lt;p&gt;I have found myself in this situation many times along my journey on HTB and THM machines, I needed a port scanner that was easy to transfer to a target machine and use from that point utilizing available technologies.&lt;/p&gt;
+&lt;p&gt;Original author credits go to Heath Adams. My tool is based heavily on what I learned from TCM Academy in the PEH course.&lt;/p&gt;
+&lt;p&gt;This is what was used in the PEH course.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>About</title>
+      <link>//localhost:1313/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/about/</guid>
+      <description>about</description>
+    </item>
+  </channel>
+</rss>
