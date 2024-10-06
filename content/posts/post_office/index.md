@@ -5,5 +5,7 @@ draft: false
 ---
 
 This will be an active directory network with one server and two workstations.
+
+
 To be continued...
 
