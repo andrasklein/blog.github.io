@@ -12,8 +12,6 @@ All references or sources used will be documented at the bottom of the page.
 
 ---
 
-5:44
-13:52
 
 ***What is a CVE?***
 
