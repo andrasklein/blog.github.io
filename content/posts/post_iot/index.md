@@ -247,7 +247,7 @@ String SendHTML(float temperature,float humidity,float pressure,float altitude){
 
 References used:
 
-* https://cdn-learn.adafruit.com/downloads/pdf adafruit-bme280-humidity-barometric-pressure-temperature-sensor-breakout.pdf
+
 * https://www.waveshare.com/w/upload/7/75/BME280_Environmental_Sensor_User_Manual _EN.pdf
 * https://www.edu.xunta.gal/centros/ieslaxeiro/system/files/BME280%20Sensor%20Module_ EN.pdf
 * https://randomnerdtutorials.com/esp32-web-server-with-bme280-mini-weather-station/
