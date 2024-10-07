@@ -17,7 +17,7 @@ All references or sources used will be documented at the bottom of the page.
 
 CVE, which stands for Common Vulnerabilities and Exposures, is a catalog of publicly known computer security vulnerabilities.  
 
-***How am I going to approach the CVE-s in a nutshell?***
+***How am I going to approach the CVEs in a nutshell?***
 
 I have to find a project on Docker Hub that meets the following requirements:
 
