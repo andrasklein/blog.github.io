@@ -4,7 +4,7 @@ date: 2024-10-05T17:13:32+02:00
 draft: false
 ---
 
-This will be an active directory network with one server and two workstations.
+This will be an Active Directory network with one server and two workstations.
 
 
 To be continued...

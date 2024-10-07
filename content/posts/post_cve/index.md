@@ -1,5 +1,5 @@
 ---
-title: "Finding CVE-s"
+title: "Finding CVEs"
 date: 2024-09-21T17:13:32+02:00
 draft: false
 ---
